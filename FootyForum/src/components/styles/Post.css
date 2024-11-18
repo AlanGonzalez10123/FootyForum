@@ -8,3 +8,36 @@
 .top {
   margin-bottom: 10px;
 }
+
+/* In Post.css */
+.image-container {
+  width: 100%;
+  height: 400px; /* Fixed height */
+  margin: 20px 0;
+  overflow: hidden;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5; /* Background color for empty space */
+  border: 1px solid #ddd;
+}
+
+.image-container img {
+  width: 80%;
+  height: 100%;
+  object-fit:contain; /* This will crop and scale the image to fill the container */
+}
+
+/* Optional: Add different sizing for different screen sizes */
+@media (max-width: 768px) {
+  .image-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    height: 200px;
+  }
+}

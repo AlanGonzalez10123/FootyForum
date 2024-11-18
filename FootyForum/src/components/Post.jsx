@@ -9,7 +9,8 @@ const Post = ({ post, isFullPost = false }) => {
   const navigate = useNavigate();
   const [upvotes, setUpvotes] = useState(post?.upvotes || 0);
 
-  const handleUpvote = async () => {
+  const handleUpvote = async (e) => {
+    e.stopPropagation(); // Prevent post click event
     try {
       const { data, error } = await supabase
         .from('Posts')
@@ -26,17 +27,27 @@ const Post = ({ post, isFullPost = false }) => {
 
   const handleDelete = async () => {
     try {
-      const { error } = await supabase
-        .from('Posts')
-        .delete()
-        .eq('id', post.id);
+        // First delete all comments associated with the post
+        const { error: commentsError } = await supabase
+            .from('Comments')
+            .delete()
+            .eq('post_id', post.id);
 
-      if (error) throw error;
-      navigate('/forum');
+        if (commentsError) throw commentsError;
+
+        // Then delete the post
+        const { error: postError } = await supabase
+            .from('Posts')
+            .delete()
+            .eq('id', post.id);
+
+        if (postError) throw postError;
+        
+        navigate('/forum');
     } catch (error) {
-      console.error('Error deleting post:', error);
+        console.error('Error deleting post:', error);
     }
-  };
+};
 
   const handleClick = () => {
     if (!isFullPost) {
@@ -58,10 +69,24 @@ const Post = ({ post, isFullPost = false }) => {
       {isFullPost && (
         <>
           {post.content && <p className="content">{post.content}</p>}
-          {post.img_url && <img src={post.img_url} alt="Post content" />}
+          {post.img_url && (
+            <div className="image-container">
+              <img 
+                src={post.img_url} 
+                alt={post.title}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://placehold.co/600x400?text=Image+Not+Found';
+                }}
+              />
+            </div>
+          )}
           <div className="post-actions">
             <button onClick={handleUpvote}>Upvote</button>
-            <button onClick={() => navigate(`/edit/${post.id}`)}>Edit</button>
+            <button onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/edit/${post.id}`);
+            }}>Edit</button>
             <button onClick={handleDelete}>Delete</button>
           </div>
           <Comments postId={post.id} />
