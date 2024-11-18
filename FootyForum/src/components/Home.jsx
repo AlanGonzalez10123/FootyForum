@@ -1,7 +1,8 @@
 const Home = () => {
   return (
-    <div>
-      <h1>Home Page</h1>
+    <div className='home'>
+      <h1>Welcome to Footy Forum!</h1>
+      <h3>Discuss all things football here!</h3>
     </div>
   );
 };
