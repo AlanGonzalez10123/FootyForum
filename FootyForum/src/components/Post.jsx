@@ -48,7 +48,7 @@ const Post = ({ post, isFullPost = false }) => {
     <div className={`Post ${isFullPost ? 'full-post' : ''}`} onClick={handleClick}>
       <div className="top">
         <h1>{post.title}</h1>
-        <h3>{post.username}</h3>
+        <h4>Created By: {post.username}</h4>
       </div>
       <div className="post-meta">
         <span>{new Date(post.created_at).toLocaleString()}</span>
